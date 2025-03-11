@@ -1,0 +1,36 @@
+server:
+  port: 8093
+  shutdown: graceful
+
+spring:
+  application:
+    name: "user-service"
+  datasource:
+    url: jdbc:postgresql://localhost:5432/users
+    username: postgres
+    password: password
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    generate-ddl: true
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/testRealm
+          jwk-set-uri: http://localhost:8080/realms/testRealm/protocol/openid-connect/certs
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+    fetch-registry: true
+    register-with-eureka: true
+
+keycloak:
+  server-url: http://localhost:8080/
+  realm: testRealm
+  client-id: edge-service
+  client-secret: test-service-secret

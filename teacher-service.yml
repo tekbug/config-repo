@@ -1,0 +1,31 @@
+server:
+  port: 8091
+  shutdown: graceful
+spring:
+  application:
+    name: "teacher-service"
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/teachers
+    username: postgres
+    password: password
+  jpa:
+    hibernate:
+      ddl-auto: update
+    generate-ddl: true
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/testRealm
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+services:
+  user:
+    url: "http://localhost:8093"
