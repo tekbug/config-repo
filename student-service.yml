@@ -25,3 +25,5 @@ eureka:
     register-with-eureka: true
 
 services.user.url: "http://localhost:8093"
+
+test.config.pull: "If message is displayed, config pull works!"
