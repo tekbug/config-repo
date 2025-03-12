@@ -15,6 +15,12 @@ spring:
       ddl-auto: update
     generate-ddl: true
 
+  rabbitmq:
+    host: localhost
+    port: "5672"
+    username: admin
+    password: password
+
   security:
     oauth2:
       resourceserver:
@@ -34,3 +40,93 @@ keycloak:
   realm: testRealm
   client-id: edge-service
   client-secret: test-service-secret
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, prometheus
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+  endpoint:
+    health:
+      show-details: always
+
+rabbitmq:
+  exchanges:
+    - name: user.events.exchange
+      type: topic
+      durable: true
+      auto_delete: false
+  queues:
+    - name: admin-service.user-events
+      durable: true
+      arguments:
+        x-dead-letter-exchange: user.deadletter
+        x-dead-letter-routing-key: deadletter.admin-service
+      bindings:
+        - exchange: user.events.exchange
+          routing_key: user.created.*
+        - exchange: user.events.exchange
+          routing_key: user.updated.*
+        - exchange: user.events.exchange
+          routing_key: user.deleted.*
+    - name: student-service.user-events
+      durable: true
+      arguments:
+        x-dead-letter-exchange: user.deadletter
+        x-dead-letter-routing-key: deadletter.student-service
+      bindings:
+        - exchange: user.events.exchange
+          routing_key: user.created.*
+        - exchange: user.events.exchange
+          routing_key: user.updated.*
+        - exchange: user.events.exchange
+          routing_key: user.deleted.*
+    - name: teacher-service.user-events
+      durable: true
+      arguments:
+        x-dead-letter-exchange: user.deadletter
+        x-dead-letter-routing-key: deadletter.teacher-service
+      bindings:
+        - exchange: user.events.exchange
+          routing_key: user.created.*
+        - exchange: user.events.exchange
+          routing_key: user.updated.*
+        - exchange: user.events.exchange
+          routing_key: user.deleted.*
+    - name: coordinator-service.user-events
+      durable: true
+      arguments:
+        x-dead-letter-exchange: user.deadletter
+        x-dead-letter-routing-key: deadletter.coordinator-service
+      bindings:
+        - exchange: user.events.exchange
+          routing_key: user.created.*
+        - exchange: user.events.exchange
+          routing_key: user.updated.*
+        - exchange: user.events.exchange
+          routing_key: user.deleted.*
+    - name: course-service.user-events
+      durable: true
+      arguments:
+        x-dead-letter-exchange: user.deadletter
+        x-dead-letter-routing-key: deadletter.course-service
+      bindings:
+        - exchange: user.events.exchange
+          routing_key: user.deleted.*
+    - name: enrollment-service.user-events
+      durable: true
+      arguments:
+        x-dead-letter-exchange: user.deadletter
+        x-dead-letter-routing-key: deadletter.enrollment-service
+      bindings:
+        - exchange: user.events.exchange
+          routing_key: user.deleted.*
+    - name: deadletter.queue
+      durable: true
+      bindings:
+        - exchange: user.deadletter
+          routing_key: deadletter.*
