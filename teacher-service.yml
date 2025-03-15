@@ -1,31 +1,45 @@
 server:
-  port: 8091
-  shutdown: graceful
+  port: 8087
 spring:
   application:
     name: "teacher-service"
   datasource:
-    driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/teachers
     username: postgres
     password: password
+    driver-class-name: org.postgresql.Driver
   jpa:
+    generate-ddl: true
     hibernate:
       ddl-auto: update
-    generate-ddl: true
-
   security:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8080/realms/testRealm
+          issuer-uri: http://localhost:8080/realms/athenaRealm
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: admin
+    password: password
 eureka:
   client:
-    register-with-eureka: true
-    fetch-registry: true
     service-url:
       defaultZone: http://localhost:8761/eureka
+    fetch-registry: true
+    register-with-eureka: true
 
-services:
-  user:
-    url: "http://localhost:8093"
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, prometheus
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+  endpoint:
+    health:
+      show-details: always
+
+services.user.url: "http://localhost:8088"
